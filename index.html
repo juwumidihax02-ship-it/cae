@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你想不想和我谈恋爱 💖</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0F1020;
+  --primary:#8B5CF6;
+  --pink:#EC4899;
+  --radius:24px;
+  --font:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+html,body{height:100%}
+body{
+  display:flex;justify-content:center;align-items:center;
+  font-family:var(--font);background:var(--bg);overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Background layers */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grad{
+  background:radial-gradient(ellipse 80% 60% at 30% 20%,rgba(139,92,246,0.10) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 70% 80%,rgba(236,72,153,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse 50% 50% at 50% 50%,rgba(168,85,247,0.04) 0%,transparent 50%);
+}
+
+#starsCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+
+/* Particles */
+.p-box{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.pr{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(255,255,255,0.25);animation:prFloat linear infinite}
+@keyframes prFloat{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:0.3}100%{transform:translateY(-10vh);opacity:0}}
+
+/* Card */
+.card-wrap{position:relative;z-index:2;width:92vw;max-width:560px}
+.card{
+  position:relative;text-align:center;
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 24px 60px rgba(0,0,0,0.5);
+  padding:52px 44px 40px;
+  opacity:0;transform:translateY(20px);
+  animation:cardIn 1s var(--ease) 0.1s forwards;
+}
+@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+
+.card.shake{animation:shake 0.35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* Badge */
+.badge{
+  display:inline-block;
+  font-size:11px;font-weight:500;letter-spacing:4px;
+  color:rgba(255,255,255,0.25);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:100px;padding:5px 18px;margin-bottom:24px;
+  opacity:0;animation:fadeUp 0.5s ease 0.5s forwards;
+}
+@keyframes fadeUp{to{opacity:1}}
+
+/* Title */
+.title{font-size:clamp(28px,5vw,42px);font-weight:700;line-height:1.3;margin-bottom:4px}
+.title .g{
+  background:linear-gradient(135deg,#f0e6ff,#c4b5fd,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.h{display:inline-block;animation:hBeat 1.5s ease-in-out infinite}
+@keyframes hBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.3)}30%{transform:scale(1)}45%{transform:scale(1.15)}60%{transform:scale(1)}}
+
+/* Subtitle */
+.sub{font-size:13px;color:rgba(255,255,255,0.15);letter-spacing:6px;margin-bottom:32px;opacity:0;animation:fadeIn 0.6s ease 1s forwards}
+@keyframes fadeIn{to{opacity:1}}
+.sub .b{animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* Buttons */
+.btn-group{display:flex;justify-content:center;align-items:center;gap:28px;flex-wrap:wrap;min-height:100px;position:relative}
+
+.btn{
+  border:none;border-radius:60px;cursor:pointer;font-weight:600;font-family:var(--font);
+  position:relative;outline:none;user-select:none;
+  transition:all 0.3s var(--ease);will-change:transform;
+  font-size:clamp(16px,2vw,20px);
+}
+
+/* Yes */
+.btn-yes{
+  background:linear-gradient(135deg,#ff6b9d,#c44dff);
+  color:#fff;padding:14px 44px;z-index:2;
+  box-shadow:0 4px 20px rgba(196,77,255,0.2);
+  opacity:0;transform:scale(0.5);animation:btnIn 0.7s var(--ease) 1.3s forwards;
+}
+.btn-yes:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 30px rgba(196,77,255,0.3)}
+.btn-yes:active{transform:translateY(0) scale(0.97)}
+
+/* No */
+.btn-no{
+  background:linear-gradient(135deg,#a0a0a0,#7a7a7a);
+  color:#fff;padding:12px 32px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  opacity:0;transform:scale(0.5);animation:btnIn 0.7s var(--ease) 1.5s forwards;
+}
+.btn-no:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.3)}
+.btn-no:active{transform:translateY(0) scale(0.95)}
+
+@keyframes btnIn{to{opacity:1;transform:scale(1)}}
+
+/* Ripple */
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.35);transform:scale(0);animation:rGo 0.6s ease-out forwards;pointer-events:none}
+@keyframes rGo{to{transform:scale(5);opacity:0}}
+
+/* Hint */
+.hint{margin-top:20px;font-size:11px;color:rgba(255,255,255,0.06);letter-spacing:2px;opacity:0;animation:fadeIn 0.8s ease 1.8s forwards}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.5);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);justify-content:center;align-items:center}
+.overlay.show{display:flex}
+.modal{background:rgba(15,16,32,0.9);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border-radius:24px;padding:36px 40px 32px;text-align:center;max-width:88vw;width:340px;border:1px solid rgba(255,255,255,0.06);transform:scale(0.85);opacity:0;transition:transform 0.4s var(--ease),opacity 0.3s ease}
+.modal.in{transform:scale(1);opacity:1}
+.s-emoji{font-size:80px;display:block;transform:scale(0);transition:transform 0.4s var(--ease) 0.1s}
+.s-emoji.in{transform:scale(1)}
+.s-label{font-size:16px;color:rgba(255,255,255,0.7);margin-top:12px;opacity:0;transform:translateY(8px);transition:opacity 0.3s ease 0.2s,transform 0.3s ease 0.2s}
+.s-label.in{opacity:1;transform:translateY(0)}
+.modal .cbtn{margin-top:16px;padding:9px 36px;border:none;border-radius:60px;background:linear-gradient(135deg,#ff6b9d,#c44dff);color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font);box-shadow:0 4px 15px rgba(196,77,255,0.2);transform:scale(0);transition:transform 0.4s var(--ease) 0.3s}
+.modal .cbtn.in{transform:scale(1)}
+
+/* Confetti */
+.c-box{position:fixed;inset:0;pointer-events:none;z-index:99;overflow:hidden}
+.c{position:absolute;width:6px;height:6px;opacity:0;animation:cFall linear forwards;border-radius:50%}
+@keyframes cFall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}5%{opacity:0.8}100%{transform:translateY(105vh) rotate(720deg);opacity:0}}
+
+/* Float text */
+.ft{position:fixed;left:50%;top:50%;z-index:50;transform:translate(-50%,-50%);font-size:clamp(18px,3vw,28px);font-weight:700;pointer-events:none;text-shadow:0 0 30px rgba(0,0,0,0.3);animation:ftGo 2.2s ease-out forwards}
+@keyframes ftGo{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}100%{opacity:0;transform:translate(-50%,calc(-50% - 70px)) scale(0.7)}}
+
+/* Heart explosion */
+.hf{position:fixed;pointer-events:none;z-index:98;animation:hFly 1.5s ease-out forwards}
+@keyframes hFly{0%{transform:translate(0,0) scale(0);opacity:1}35%{transform:translate(var(--dx),var(--dy)) scale(1.3);opacity:1}100%{transform:translate(var(--dx2),var(--dy2)) scale(0.1);opacity:0}}
+
+.pt{position:fixed;pointer-events:none;z-index:50;font-size:12px;font-weight:500;animation:ptGo 2s ease-out forwards}
+@keyframes ptGo{0%{opacity:0;transform:translateY(0) scale(0.3)}15%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(0.6)}}
+
+.flash{position:fixed;inset:0;z-index:40;pointer-events:none;background:radial-gradient(circle at var(--fx,50% 50%),rgba(196,77,255,0.15),transparent 60%);opacity:0;animation:flOut 0.7s ease-out forwards}
+@keyframes flOut{0%{opacity:1}100%{opacity:0}}
+
+@media(max-width:600px){
+  .card{padding:36px 24px 28px}
+  .title{font-size:22px}
+  .btn-group{gap:16px;flex-direction:column}
+  .btn-yes{padding:12px 36px;font-size:17px}
+  .btn-no{padding:10px 26px;font-size:15px}
+  .sub{font-size:12px;letter-spacing:4px;margin-bottom:24px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+::selection{background:rgba(139,92,246,0.3)}
+</style>
+</head>
+<body>
+
+<div class="bg-layer bg-grad"></div>
+<canvas id="starsCanvas"></canvas>
+<div class="p-box" id="pBox"></div>
+
+<div class="card-wrap">
+  <div class="card" id="card">
+    <div class="badge">✦ 一个问题</div>
+    <div class="title"><span class="h">💖</span> <span class="g">你想不想</span></div>
+    <div class="title"><span class="g">和我谈恋爱</span> <span class="h">💖</span></div>
+    <div class="sub">— <span class="b">请诚实回答</span> —</div>
+    <div class="btn-group">
+      <button class="btn btn-yes" id="btnYes">想 💕</button>
+      <button class="btn btn-no" id="btnNo">不想 😅</button>
+    </div>
+    <div class="hint">选什么都行，真的</div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <span class="s-emoji" id="sEmoji" style="display:none">😻</span>
+    <div class="s-label" id="sLabel">喵~ 你最好啦！</div>
+    <button class="cbtn" id="cbtn">贴贴~</button>
+  </div>
+</div>
+<div class="c-box" id="cBox"></div>
+
+<script>
+// === Stars ===
+const c=document.getElementById('starsCanvas'),x=c.getContext('2d');
+let W,H,s=[];
+function rs(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+class St{constructor(){this.r();this.y=Math.random()*H}
+r(){this.x=Math.random()*W;this.y=-3;this.s=Math.random()*1.5+.2;this.a=Math.random()*.4+.1;this.sp=Math.random()*.06+.01}
+u(t){this.y+=this.sp;if(this.y>H+3)this.r();return this.a}}
+function is(n){s=[];for(let i=0;i<n;i++){const t=new St;t.y=Math.random()*H;s.push(t)}}
+function ds(t){x.clearRect(0,0,W,H);for(const p of s){const a=p.u(t);x.beginPath();x.arc(p.x,p.y,p.s,0,Math.PI*2);x.fillStyle=`rgba(255,255,255,${a})`;x.fill()}}
+rs();is(Math.min(200,Math.floor(Math.min(W,H)*.3)));
+let ai;function lp(t){ds(t);ai=requestAnimationFrame(lp)}
+lp(0);window.addEventListener('resize',()=>{rs();is(Math.min(200,Math.floor(Math.min(W,H)*.3)))});
+
+// === Particles ===
+for(let i=0;i<12;i++){const e=document.createElement('div');e.className='pr';e.style.left=Math.random()*100+'%';e.style.animationDuration=(Math.random()*12+16)+'s';e.style.animationDelay=(Math.random()*-10)+'s';document.getElementById('pBox').appendChild(e)}
+
+// === Stickers ===
+const stickers=[
+  {e:'😻',l:'喵喵开心到飞起~！❤️'},{e:'🥰',l:'好耶好耶！转圈圈~！'},{e:'🎉',l:'放烟花庆祝！！🎇'},
+  {e:'🌟',l:'你最好啦！超级喜欢！！'},{e:'💖',l:'心动值爆表啦！！💥'},{e:'✨',l:'星星眼期待中 ✨'},
+  {e:'🥺',l:'真的吗…？好感动呜…'},{e:'😽',l:'啾咪~ 等你哦！'},{e:'🐱',l:'ฅ^•ﻌ•^ฅ 喵~'},
+  {e:'💕',l:'粉色泡泡冒了一屋子 💕'},{e:'🌙',l:'月亮代表我的心~'},{e:'🦋',l:'心里有小蝴蝶在飞~'},
+  {e:'🌈',l:'你一说想天都放晴了！'},{e:'🌸',l:'心花怒放~开花啦'},{e:'🎶',l:'哼着小曲儿想你 ♫'},
+  {e:'🫶',l:'爱心发射！biu~'},{e:'🌹',l:'送你一朵红玫瑰🌹'},{e:'⭐',l:'你是我的小星星~'},
+];
+
+// === Main ===
+let noClicks=0,busy=false;
+const $=id=>document.getElementById(id),by=$('btnYes'),bn=$('btnNo'),card=$('card');
+
+// === Click handlers ===
+bn.addEventListener('click',function(e){
+  noClicks=Math.min(noClicks+1,30);
+  ripple(e,this);
+  // Shrink btnNo, grow btnYes
+  const ns=Math.max(Math.pow(0.85,noClicks),0.05);
+  this.style.transform='scale('+ns+')';this.style.opacity=Math.min(1,ns*5);
+  if(ns<0.04){this.style.display='none'}
+  const ys=Math.min(Math.pow(1.20,noClicks),25);
+  by.style.transform='scale('+ys+')';by.style.zIndex=99;
+  // Shake
+  card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');
+  // Taunts
+  const t=[[1,'你认真的吗 😅'],[2,'再想想呗 🥺'],[3,'别这样嘛 🥹'],[5,'别挣扎啦~ 点想吧！','#8B5CF6'],[10,'呜呜…点一下想嘛 😭','#6D5EF8'],[15,'你已被包围！','#A855F7'],[20,'我投降！你赢了😂','#EC4899'],[30,'💀 你是真的倔 💀','#8B5CF6']];
+  for(const[c,txt,cl]of t){if(Math.round(noClicks)===c){ft(txt,cl);break}}
+});
+
+by.addEventListener('click',function(e){
+  if(busy)return;busy=true;
+  ripple(e,this);
+  const r=this.getBoundingClientRect();fl(r.left+r.width/2,r.top+r.height/2);
+  const s=stickers[Math.floor(Math.random()*stickers.length)];
+  setTimeout(()=>showSticker(s),80);cf(60);hb();
+  card.style.transition='transform 0.3s ease';card.style.transform='scale(1.01)';
+  setTimeout(()=>{card.style.transform='scale(1)'},300);
+  const p=['💕 心动信号','💖 心跳加速','✨ 魔法连线','🌸 恋爱ing'];pt(p[Math.floor(Math.random()*p.length)],10+Math.random()*30,12+Math.random()*12,'#A855F7');
+  setTimeout(()=>{busy=false},500);
+});
+
+// === Utils ===
+function ripple(e,el){
+  const r=el.getBoundingClientRect(),sz=Math.max(r.width,r.height)*1.5,
+    x=(e.clientX||r.left+r.width/2)-r.left-sz/2,
+    y=(e.clientY||r.top+r.height/2)-r.top-sz/2,
+    rip=document.createElement('span');
+  rip.className='ripple';rip.style.cssText=`width:${sz}px;height:${sz}px;left:${x}px;top:${y}px;`;
+  el.appendChild(rip);setTimeout(()=>rip.remove(),600);
+}
+
+function showSticker(s){
+  const o=$('overlay'),m=$('modal'),e=$('sEmoji'),l=$('sLabel');
+  m.classList.remove('in');e.classList.remove('in');l.classList.remove('in');$('cbtn').classList.remove('in');
+  e.style.display='block';e.textContent=s.e;void e.offsetWidth;e.classList.add('in');
+  l.textContent=s.l;o.classList.add('show');
+  requestAnimationFrame(()=>{m.classList.add('in');setTimeout(()=>l.classList.add('in'),80);setTimeout(()=>$('cbtn').classList.add('in'),200)});
+}
+function cs(){$('overlay').classList.remove('show')}
+$('cbtn').addEventListener('click',cs);
+$('overlay').addEventListener('click',function(e){if(e.target===this)cs()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cs()});
+
+function ft(t,c){const e=document.createElement('div');e.className='ft';e.textContent=t;if(c)e.style.color=c;document.body.appendChild(e);setTimeout(()=>e.remove(),2400)}
+function pt(t,x,y,c){const e=document.createElement('div');e.className='pt';e.textContent=t;e.style.left=x+'%';e.style.top=y+'%';e.style.color=c||'#A855F7';document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
+
+function cf(n){const b=$('cBox'),cs=['#8B5CF6','#A855F7','#EC4899','#6D5EF8','#C084FC'];for(let i=0;i<n;i++){const e=document.createElement('div');e.className='c';e.style.left=Math.random()*100+'%';e.style.background=cs[Math.floor(Math.random()*cs.length)];const w=Math.random()*5+3;e.style.width=w+'px';e.style.height=w+'px';e.style.animationDuration=(1.5+Math.random()*1.5)+'s';e.style.animationDelay=Math.random()*0.4+'s';b.appendChild(e)}setTimeout(()=>{b.innerHTML=''},4000)}
+
+function hb(){const es=['💖','💕','❤️','💗','💓'];for(let i=0;i<20;i++){const e=document.createElement('div');e.className='hf';e.textContent=es[Math.floor(Math.random()*es.length)];e.style.left=(35+Math.random()*30)+'%';e.style.top=(35+Math.random()*30)+'%';e.style.fontSize=(Math.random()*14+12)+'px';const a=Math.random()*Math.PI*2,d=40+Math.random()*150;e.style.setProperty('--dx',Math.cos(a)*d+'px');e.style.setProperty('--dy',Math.sin(a)*d+'px');e.style.setProperty('--dx2',Math.cos(a)*d*0.4+'px');e.style.setProperty('--dy2',Math.sin(a)*d*0.4+'px');e.style.animationDuration=(Math.random()*0.4+1)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),1800)}}
+
+function fl(x,y){const e=document.createElement('div');e.className='flash';e.style.setProperty('--fx',x+'px '+y+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),800)}
+
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&ai){cancelAnimationFrame(ai);ai=null}else if(!document.hidden&&!ai)lp(performance.now())});
+
+console.log('%c💖 你想不想和我谈恋爱？','font-size:20px;font-weight:700;color:#8B5CF6');
+console.log('%c答案当然是 想 啦！','font-size:14px;color:#EC4899');
+</script>
+</body>
+</html>
