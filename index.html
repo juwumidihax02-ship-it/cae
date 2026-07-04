@@ -174,8 +174,8 @@ var curAudio = new Audio();
 curAudio.volume = 0.4;
 function playBgm(songs){
   curAudio.pause();
-  const file=songs[Math.floor(Math.random()*songs.length)];
-  curAudio.src = file;
+  curAudio.src = songs[Math.floor(Math.random()*songs.length)];
+  curAudio.load();
   curAudio.play();
 }
 
