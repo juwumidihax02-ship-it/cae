@@ -142,22 +142,19 @@ for(let i=0;i<12;i++){const e=document.createElement('div');e.className='pr';e.s
 const bgFiles = ['6b7f87524b38f90ecf41f19e947172ce.mp4','a37edf4e5fbb4ea8fa3a1e63ad16ce0f.mp4','a9f17fc5fbcd0215da680f5afe21585a.mp4','c39c4b88c1d7f8698a2ad774d5d440ed.mp4','dcd284e61f03988340d21371d18687d5.mp4'];
 
 const happySongs=[
-  '【指纹】重要的不是气温有多冷而是身边的人有多暖..mp3',
-  '青花瓷0.9.mp4',
-  '【红尘客栈（remix）】剑出鞘恩怨了谁笑 我只求今朝拥你入怀抱 红尘客栈风似刀..mp3',
-  ...bgFiles
+  'music/【指纹】重要的不是气温有多冷而是身边的人有多暖..mp3',
+  'music/青花瓷0.9.mp4',
+  'music/【红尘客栈（remix）】剑出鞘恩怨了谁笑 我只求今朝拥你入怀抱 红尘客栈风似刀..mp3',
+  ...bgFiles.map(f=>'music/'+f)
 ];
 const sadSongs=[
-  '片刻的幸福都有代价其实不被爱倒不是什么最让人难过的 被爱本身好像就是一种运气 没有这种运气是我没办法改变的事实只是以为被爱的这个.mp3',
-  '「感谢你曾经来过」谁会不厌其烦的安慰那无知的少年 1.1倍速.mp3',
-  '【跳楼机】你只字不提为他冒的险 谈起他是全是爱笑的眉眼..mp3',
-  ...bgFiles
+  'music/片刻的幸福都有代价其实不被爱倒不是什么最让人难过的 被爱本身好像就是一种运气 没有这种运气是我没办法改变的事实只是以为被爱的这个.mp3',
+  'music/「感谢你曾经来过」谁会不厌其烦的安慰那无知的少年 1.1倍速.mp3',
+  'music/【跳楼机】你只字不提为他冒的险 谈起他是全是爱笑的眉眼..mp3',
+  ...bgFiles.map(f=>'music/'+f)
 ];
 
-function getSongPath(file, isBg) {
-  var base = isBg ? 'F:/ae剪辑/bg/' : 'F:/ae剪辑/bgm/';
-  return 'file:///' + encodeURI(base + file);
-}
+
 
 // === Stickers ===
 const stickers=[
