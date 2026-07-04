@@ -175,8 +175,7 @@ curAudio.volume = 0.4;
 function playBgm(songs){
   curAudio.pause();
   const file=songs[Math.floor(Math.random()*songs.length)];
-  const isBg = bgFiles.indexOf(file) >= 0;
-  curAudio.src = getSongPath(file, isBg);
+  curAudio.src = file;
   curAudio.play();
 }
 
